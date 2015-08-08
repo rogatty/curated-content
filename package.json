@@ -1,7 +1,7 @@
 {
   "name": "curated-content-slack",
   "version": "0.0.1",
-  "main": "app.js",
+  "main": "server.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/rogatty/curated-content"
@@ -13,5 +13,8 @@
   },
   "engines": {
     "node": "0.10.x"
+  },
+  "scripts": {
+    "start": "node server.js"
   }
 }
