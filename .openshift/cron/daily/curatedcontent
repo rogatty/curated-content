@@ -1,4 +1,3 @@
 #!/bin/bash
 
-cd $OPENSHIFT_REPO_DIR
-node update
+node $OPENSHIFT_REPO_DIR/update
