@@ -44,11 +44,15 @@ request(apiUrl, function (error, response, body) {
 			if (difference.added.length || difference.removed.length) {
 				file.saveFile(nowString, difference);
 				slack.sendDifference(difference);
+			} else {
+				console.log('Nothing new');
 			}
 		}
 
-		if (currentState) {
+		if (currentState.length) {
 			file.saveFile('current', currentState);
+		} else {
+			console.error('No current state');
 		}
 	} else {
 		console.error('Error when trying to connect to ' + apiUrl, error, response);
