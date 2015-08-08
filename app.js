@@ -3,7 +3,7 @@
 var jsonfile = require('jsonfile'),
 	request = require('request'),
 	diff = require('./lib/diff'),
-	apiUrl = 'http://community.wikia.com/wikia.php?controller=CuratedContent&method=getCuratedContentQuality',
+	apiUrl = 'http://community.wikia.com/wikia.php?controller=CuratedContent&method=getWikisWithCuratedContent',
 	dataDir = 'data/',
 	saveFile = function (fileName, content) {
 		jsonfile.writeFile(dataDir + fileName + '.json', content, function (err) {
@@ -18,9 +18,9 @@ try {
 } catch (e) {}
 
 request(apiUrl, function (error, response, body) {
-	var curatedContentQuality,
-		curatedContentQualityPerWiki,
-		currentState,
+	var jsonResponse,
+		idsList,
+		currentState = [],
 		previousState,
 		difference,
 		now = new Date(),
@@ -31,11 +31,11 @@ request(apiUrl, function (error, response, body) {
 			throws: false
 		});
 
-		curatedContentQuality = JSON.parse(body);
-		curatedContentQualityPerWiki = curatedContentQuality.curatedContentQualityPerWiki;
+		jsonResponse = JSON.parse(body) || {};
+		idsList = jsonResponse.ids_list || {};
 
-		if (curatedContentQualityPerWiki) {
-			currentState = Object.keys(curatedContentQualityPerWiki);
+		for (var id in idsList) {
+			currentState.push(idsList[id].u);
 		}
 
 		if (previousState && currentState) {
