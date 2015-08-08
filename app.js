@@ -1,25 +1,26 @@
 'use strict';
 
-var jsonfile = require('jsonfile'),
-	request = require('request'),
+var request = require('request'),
 	diff = require('./lib/diff'),
-	apiUrl = 'http://community.wikia.com/wikia.php?controller=CuratedContent&method=getWikisWithCuratedContent',
-	dataDir = 'data/',
-	saveFile = function (fileName, content) {
-		jsonfile.writeFile(dataDir + fileName + '.json', content, function (err) {
-			if (err) {
-				console.error('There was error when writing to file', err);
-			}
-		});
-	};
+	file = require('./lib/file'),
+	slack = require('./lib/slack'),
+	apiUrl = 'http://community.wikia.com/wikia.php?controller=CuratedContent&method=getWikisWithCuratedContent';
+
 
 try {
-	//require('./setEnv')();
-} catch (e) {}
+	require('./setEnv')();
+} catch (e) {
+	// You still have a chance to succeed
+}
+
+if (!process.env['SLACK_WEBHOOK_URL']) {
+	throw 'You know nothing';
+}
 
 request(apiUrl, function (error, response, body) {
 	var jsonResponse,
 		idsList,
+		id,
 		currentState = [],
 		previousState,
 		difference,
@@ -27,26 +28,27 @@ request(apiUrl, function (error, response, body) {
 		nowString = '' + now.getFullYear() + '-' + (now.getMonth() + 1) + '-' + now.getDate();
 
 	if (!error && response.statusCode == 200) {
-		previousState = jsonfile.readFileSync(dataDir + 'current.json', {
-			throws: false
-		});
+		previousState = file.readFile('current.json');
 
 		jsonResponse = JSON.parse(body) || {};
 		idsList = jsonResponse.ids_list || {};
 
-		for (var id in idsList) {
-			currentState.push(idsList[id].u);
+		for (id in idsList) {
+			if (idsList.hasOwnProperty(id)) {
+				currentState.push(idsList[id].u);
+			}
 		}
 
 		if (previousState && currentState) {
 			difference = diff(previousState, currentState);
 			if (difference.added.length || difference.removed.length) {
-				saveFile(nowString, difference);
+				file.saveFile(nowString, difference);
+				slack.sendDifference(difference);
 			}
 		}
 
 		if (currentState) {
-			saveFile('current', currentState);
+			file.saveFile('current', currentState);
 		}
 	} else {
 		console.error('Error when trying to connect to ' + apiUrl, error, response);
