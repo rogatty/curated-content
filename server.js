@@ -1,5 +1,10 @@
 #!/bin/env node
-//  OpenShift sample Node application
+
+// ==============================================================================/
+// OpenShift requires server to be listening or I just haven't found a way around.
+// This is the sample app, not relevant to Curated Content bot.
+// ==============================================================================/
+
 var express = require('express');
 var fs      = require('fs');
 
