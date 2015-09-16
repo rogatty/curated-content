@@ -7,5 +7,4 @@ run from cron:
 * if there's a change:
   * save new list to json file
   * send message to #x-wing
-  * add a screenshot maybe?
   * save changelog to json file
