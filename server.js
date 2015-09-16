@@ -75,7 +75,10 @@ var SampleApp = function() {
 
         self.routes['/'] = function(req, res) {
             res.setHeader('Content-Type', 'text/html');
-            res.send('Whatever');
+
+            // RUN THE SCRIPT
+            require('update');
+            res.send('Updated');
         };
     };
 
