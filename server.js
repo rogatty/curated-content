@@ -77,7 +77,7 @@ var SampleApp = function() {
             res.setHeader('Content-Type', 'text/html');
 
             // RUN THE SCRIPT
-            require('update');
+            require('./update');
             res.send('Updated');
         };
     };
