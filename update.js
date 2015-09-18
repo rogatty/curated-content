@@ -43,7 +43,7 @@ request(apiUrl, function (error, response, body) {
 			difference = diff(previousState, currentState);
 			if (difference.added.length || difference.removed.length) {
 				file.saveFile(nowString, difference);
-				slack.sendDifference(difference);
+				slack.sendDifference(difference, currentState.length);
 			} else {
 				console.log('Nothing new');
 			}
